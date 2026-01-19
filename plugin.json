@@ -1,8 +1,8 @@
 {
-  "id": "68584c72-fea2-4c1b-b52f-95cd399ebbb6",
-  "uuid": "68584c72-fea2-4c1b-b52f-95cd399ebbb6",
-  "title": "Deep Research",
-  "iconURL": "https://raw.githubusercontent.com/TypingMind/plugin-deep-research/refs/heads/main/icon.png",
+  "id": "c98a694c-74c7-426f-8aaa-24b52f2a3942",
+  "uuid": "c98a694c-74c7-426f-8aaa-24b52f2a3942",
+  "title": "Research Badger",
+  "iconURL": "https://raw.githubusercontent.com/wimpysworld/plugin-research-badger/refs/heads/main/icon.png",
   "oauthConfig": null,
   "userSettings": [
     {
@@ -22,14 +22,10 @@
     {
       "name": "researchMode",
       "type": "enum",
-      "label": "Research Mode",
-      "values": [
-        "Lightweight mode",
-        "Comprehensive mode",
-        "Dynamic mode"
-      ],
-      "description": "Select \"Comprehensive mode\" if you prefer to have more accurate result (consume more tokens). Default: \"Lightweight mode\".",
-      "defaultValue": "Lightweight mode"
+      "label": "Digging Intensity",
+      "values": ["Scout Dig", "Deep Burrow", "Adaptive Dig"],
+      "description": "Select \"Deep Burrow\" if you prefer to have more accurate result (consume more tokens). Default: \"Scout Dig\".",
+      "defaultValue": "Scout Dig"
     }
   ],
   "pluginFunctions": [
@@ -41,19 +37,13 @@
         "name": "update_research_plan",
         "parameters": {
           "type": "object",
-          "required": [
-            "todos"
-          ],
+          "required": ["todos"],
           "properties": {
             "todos": {
               "type": "array",
               "items": {
                 "type": "object",
-                "required": [
-                  "content",
-                  "status",
-                  "id"
-                ],
+                "required": ["content", "status", "id"],
                 "properties": {
                   "id": {
                     "type": "string",
@@ -100,12 +90,10 @@
         "method": "GET"
       },
       "openaiSpec": {
-        "name": "research_tool_search_web",
+        "name": "badger_search_web",
         "parameters": {
           "type": "object",
-          "required": [
-            "query"
-          ],
+          "required": ["query"],
           "properties": {
             "query": {
               "type": "string",
@@ -124,7 +112,7 @@
     },
     {
       "id": "40e566af-f012-4dca-90c3-9965f391bfc2",
-      "code": "async function extract_web_page(params, userSettings) {\n  if (userSettings.researchMode === 'Comprehensive mode') {\n    return await fetch('https://api.firecrawl.dev/v2/scrape', {\n      method: 'POST',\n      headers: {\n        'Content-Type': 'application/json',\n        Authorization: 'Bearer ' + userSettings.firecrawlApiKey,\n      },\n      body: JSON.stringify({\n        url: params.pageUrl,\n        formats: ['markdown'],\n        onlyMainContent: true,\n      }),\n    }).then((r) => r.json());\n  } else {\n    const json = await fetch('https://api.firecrawl.dev/v2/scrape', {\n      method: 'POST',\n      headers: {\n        'Content-Type': 'application/json',\n        Authorization: 'Bearer ' + userSettings.firecrawlApiKey,\n      },\n      body: JSON.stringify({\n        url: params.pageUrl,\n        formats: [\n          {\n            type: 'json',\n            prompt: params.extractInstructions,\n          },\n        ],\n      }),\n    }).then((r) => r.json());\n\n    if (userSettings.researchMode === 'Dynamic mode') {\n      return {\n        result: json,\n        furtherInstructions:\n          'This result is extracted from the original web page. Use the \"read_full_web_page_content\" tool if you need to read the full content of the web page.',\n      };\n    } else {\n      return json;\n    }\n  }\n}\n",
+      "code": "async function extract_web_page(params, userSettings) {\n  if (userSettings.researchMode === 'Deep Burrow') {\n    return await fetch('https://api.firecrawl.dev/v2/scrape', {\n      method: 'POST',\n      headers: {\n        'Content-Type': 'application/json',\n        Authorization: 'Bearer ' + userSettings.firecrawlApiKey,\n      },\n      body: JSON.stringify({\n        url: params.pageUrl,\n        formats: ['markdown'],\n        onlyMainContent: true,\n      }),\n    }).then((r) => r.json());\n  } else {\n    const json = await fetch('https://api.firecrawl.dev/v2/scrape', {\n      method: 'POST',\n      headers: {\n        'Content-Type': 'application/json',\n        Authorization: 'Bearer ' + userSettings.firecrawlApiKey,\n      },\n      body: JSON.stringify({\n        url: params.pageUrl,\n        formats: [\n          {\n            type: 'json',\n            prompt: params.extractInstructions,\n          },\n        ],\n      }),\n    }).then((r) => r.json());\n\n    if (userSettings.researchMode === 'Adaptive Dig') {\n      return {\n        result: json,\n        furtherInstructions:\n          'This result is extracted from the original web page. Use the \"read_full_web_page_content\" tool if you need to read the full content of the web page.',\n      };\n    } else {\n      return json;\n    }\n  }\n}\n",
       "name": "Extract Web Page",
       "httpAction": {
         "id": "fe67c640-6a5b-4ff8-bf44-394bccd0d109",
@@ -140,9 +128,7 @@
         "name": "extract_web_page",
         "parameters": {
           "type": "object",
-          "required": [
-            "pageUrl"
-          ],
+          "required": ["pageUrl"],
           "properties": {
             "pageUrl": {
               "type": "string",
@@ -154,22 +140,20 @@
             }
           }
         },
-        "description": "Retrieves the text content of a web page in markdown format. When in Lightweight Mode, this tool returns an extracted content with only the answer based on the extractInstructions. When in Comprehensive Mode, this tool returns the full content of the web page."
+        "description": "Retrieves the text content of a web page in markdown format. When in Scout Dig mode, this tool returns an extracted content with only the answer based on the extractInstructions. When in Deep Burrow mode, this tool returns the full content of the web page."
       },
       "outputType": "respond_to_ai",
       "implementationType": "javascript"
     },
     {
       "id": "16f3fbef-df16-4833-8d43-be7e71e8a912",
-      "code": "async function read_full_web_page_content(params, userSettings) {\n  if (userSettings.researchMode !== 'Lightweight mode') {\n    return await fetch('https://api.firecrawl.dev/v2/scrape', {\n      method: 'POST',\n      headers: {\n        'Content-Type': 'application/json',\n        Authorization: 'Bearer ' + userSettings.firecrawlApiKey,\n      },\n      body: JSON.stringify({\n        url: params.pageUrl,\n        formats: ['markdown'],\n        onlyMainContent: true,\n      }),\n    }).then((r) => r.json());\n  } else {\n    return \"\\\"read_full_web_page_content\\\" is not allowed in \" + userSettings.researchMode;\n  }\n}",
+      "code": "async function read_full_web_page_content(params, userSettings) {\n  if (userSettings.researchMode !== 'Scout Dig') {\n    return await fetch('https://api.firecrawl.dev/v2/scrape', {\n      method: 'POST',\n      headers: {\n        'Content-Type': 'application/json',\n        Authorization: 'Bearer ' + userSettings.firecrawlApiKey,\n      },\n      body: JSON.stringify({\n        url: params.pageUrl,\n        formats: ['markdown'],\n        onlyMainContent: true,\n      }),\n    }).then((r) => r.json());\n  } else {\n    return \"\\\"read_full_web_page_content\\\" is not allowed in \" + userSettings.researchMode;\n  }\n}",
       "name": "Read Full Web Page",
       "openaiSpec": {
         "name": "read_full_web_page_content",
         "parameters": {
           "type": "object",
-          "required": [
-            "pageUrl"
-          ],
+          "required": ["pageUrl"],
           "properties": {
             "pageUrl": {
               "type": "string",
@@ -188,10 +172,10 @@
     {
       "id": "800bd740-c179-4c63-b566-0a74223fc261",
       "url": "",
-      "name": "Deep Research Mode",
+      "name": "Research Badger Mode",
       "method": "GET",
       "source": "static",
-      "staticContent": "<USER_INPUT>\n**Deep Research**: Enabled.\n**Research Mode**: {researchMode}\n</USER_INPUT>\n\nYou are an AI research assistant tasked with conducting deep, thorough research on a given topic. Your goal is to gather comprehensive information, analyze it, and present a well-structured report.\n\nResearch Mode Instructions:\n- **Lightweight Mode**: In lightweight mode, Deep Research will attempt to extract data from online sources using the extract_web_page tool, which saves tokens at a cost of reduced data accuracy. This is the default mode.\n- **Comprehensive Mode**: Deep Research will read the full content of the online sources to determine the final answer. If the web pages have a lot of content, it can risk consuming a lot of tokens, which is expensive and may exceed the model's context length limit.\n- **Dynamic Mode**: Deep Research will run in Lightweight Mode by default, but may opt in to read full web page content when needed (using the \"read_full_web_page_content\" tool) to get the most accurate answer.\n\nFollow these instructions carefully:\n\n1. Begin by reading the research task:\n<research_task>\n{lastUserMessage}\n</research_task>\n\n2. Create an initial research plan using the planning tool to create a todo list. This plan should outline the main areas of investigation and the steps you'll take to complete the task. Update the status of each todo list item as you progress through your research.\n\n3. Conduct at least one web search to gather information. In deep research mode, all information presented must come from the sources of your research. Before using any tools, provide your reasoning for choosing that particular tool.\n\n4. Follow these guidelines while gathering information:\n   - Collect all necessary data to carry out the research task concisely and thoroughly.\n   - Use bullet points or numbered lists for clarity when appropriate.\n   - Don't ask for unnecessary information or information already provided.\n   - Continue researching until all items in your todo list are completed.\n   - Use available tools one at a time to find the requested information.\n   - Gather data from multiple sources to ensure accuracy and comprehensiveness.\n\n5. Cite all sources used with links to the original websites.\n\n6. Once you have gathered all the information, compile a comprehensive report. Use markdown formatting (such as tables and bullet points) and tools (like graphs) to present your findings effectively. Highlight any surprising or interesting details you discovered during your research.\n\n7. Output your final report with the following structure\n   \n   [Title of report]\n   [Include your comprehensive report here, using appropriate formatting]\n   \n   Interesting Findings:\n   [Highlight surprising or noteworthy details]\n   \n   Sources:\n   [List all sources with links]",
+      "staticContent": "<USER_INPUT>\n**Research Badger**: Enabled.\n**Digging Intensity**: {researchMode}\n</USER_INPUT>\n\nYou are Research Badger, an AI research assistant that relentlessly digs through sources to conduct thorough, comprehensive research on any given topic. Your goal is to gather comprehensive information, analyze it, and present a well-structured report.\n\nDigging Intensity Instructions:\n- **Scout Dig**: In Scout Dig mode, Research Badger will attempt to extract data from online sources using the extract_web_page tool, which saves tokens at a cost of reduced data accuracy. This is the default mode.\n- **Deep Burrow**: Research Badger will read the full content of the online sources to determine the final answer. If the web pages have a lot of content, it can risk consuming a lot of tokens, which is expensive and may exceed the model's context length limit.\n- **Adaptive Dig**: Research Badger will run in Scout Dig mode by default, but may opt in to read full web page content when needed (using the \"read_full_web_page_content\" tool) to get the most accurate answer.\n\nFollow these instructions carefully:\n\n1. Begin by reading the research task:\n<research_task>\n{lastUserMessage}\n</research_task>\n\n2. Create an initial research plan using the planning tool to create a todo list. This plan should outline the main areas of investigation and the steps you'll take to complete the task. Update the status of each todo list item as you progress through your research.\n\n3. Conduct at least one web search to gather information. In Research Badger mode, all information presented must come from the sources of your research. Before using any tools, provide your reasoning for choosing that particular tool.\n\n4. Follow these guidelines while gathering information:\n   - Collect all necessary data to carry out the research task concisely and thoroughly.\n   - Use bullet points or numbered lists for clarity when appropriate.\n   - Don't ask for unnecessary information or information already provided.\n   - Continue researching until all items in your todo list are completed.\n   - Use available tools one at a time to find the requested information.\n   - Gather data from multiple sources to ensure accuracy and comprehensiveness.\n\n5. Cite all sources used with links to the original websites.\n\n6. Once you have gathered all the information, compile a comprehensive report. Use markdown formatting (such as tables and bullet points) and tools (like graphs) to present your findings effectively. Highlight any surprising or interesting details you discovered during your research.\n\n7. Output your final report with the following structure\n   \n   [Title of report]\n   [Include your comprehensive report here, using appropriate formatting]\n   \n   Interesting Findings:\n   [Highlight surprising or noteworthy details]\n   \n   Sources:\n   [List all sources with links]",
       "cacheDurationHours": 1,
       "cacheRefreshPolicy": "REFRESH_NEVER"
     }
