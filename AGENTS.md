@@ -8,7 +8,7 @@ Research Badger is a TypingMind plugin that performs deep, relentless research b
 
 - **Plugin Format**: TypingMind JSON plugin specification
 - **Implementation**: JavaScript (ES6+) and HTTP requests
-- **APIs**: Serp API (web search), Firecrawl API (content extraction)
+- **APIs**: Exa API (web search), Jina AI Reader API (content extraction)
 - **Runtime**: TypingMind plugin environment (browser-based)
 
 ## Project Structure
@@ -37,12 +37,12 @@ plugin-research-badger/
    - Manages structured research task lists
    - Tracks progress with todo items (pending/in_progress/completed/cancelled)
 
-2. **Search Web** (`badger_search_web`) - HTTP
-   - Google search via Serp API
+2. **Search Web** (`badger_search_web`) - JavaScript
+   - Semantic web search via Exa API
    - Returns snippets, titles, and URLs
 
 3. **Extract Web Page** (`extract_web_page`) - JavaScript
-   - Lightweight extraction using Firecrawl
+   - Lightweight extraction using Jina AI Reader
    - Mode-aware (Scout Dig/Deep Burrow/Adaptive Dig)
 
 4. **Read Full Web Page** (`read_full_web_page_content`) - JavaScript
@@ -53,8 +53,8 @@ plugin-research-badger/
 
 ### Required API Keys
 
-- **Serp API**: Sign up at [serpapi.com](https://serpapi.com)
-- **Firecrawl API**: Get key at [firecrawl.dev/app/api-keys](https://www.firecrawl.dev/app/api-keys)
+- **Exa API**: Sign up at [dashboard.exa.ai](https://dashboard.exa.ai)
+- **Jina AI Reader API**: Get key at [jina.ai/?sui=apikey](https://jina.ai/?sui=apikey)
 
 ### Digging Intensity
 
@@ -166,7 +166,7 @@ Multi-step: "Research AI coding assistants: features, pricing, and user reviews"
 Follow conventional commits:
 ```
 feat: add citation tracking to extract_web_page
-fix: handle Firecrawl API errors gracefully
+fix: handle Jina API errors gracefully
 docs: update README with troubleshooting section
 refactor: consolidate API error handling
 ```
@@ -180,8 +180,8 @@ refactor: consolidate API error handling
 ## Resources
 
 - [TypingMind Plugin Documentation](https://docs.typingmind.com/plugins/build-a-typingmind-plugin)
-- [Serp API Documentation](https://serpapi.com/docs)
-- [Firecrawl API Documentation](https://docs.firecrawl.dev)
+- [Exa API Documentation](https://docs.exa.ai)
+- [Jina AI Reader Documentation](https://docs.jina.ai/jina-ai-reader)
 - [OpenAI Function Calling](https://platform.openai.com/docs/guides/function-calling)
 
 ## Known Limitations
@@ -189,5 +189,5 @@ refactor: consolidate API error handling
 - Research Plan tool has no persistent state (AI must track todos)
 - Token consumption can be high in Deep Burrow mode
 - Maximum research session: ~2 minutes
-- Requires valid API keys for both Serp and Firecrawl
+- Requires valid API keys for both Exa and Jina AI Reader
 - Adaptive Dig mode relies on AI discretion for full reads

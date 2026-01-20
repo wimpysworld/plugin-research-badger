@@ -6,18 +6,18 @@
   "oauthConfig": null,
   "userSettings": [
     {
-      "name": "serpAPIKey",
+      "name": "exaAPIKey",
       "type": "password",
-      "label": "Serp API Key",
+      "label": "Exa API Key",
       "required": true,
-      "description": "Serp API is used for the Web Search tool. Sign up from serpapi.com to get an API key."
+      "description": "Exa API is used for AI-powered web search. Get your free API key (includes $10 credit) at https://dashboard.exa.ai"
     },
     {
-      "name": "firecrawlApiKey",
+      "name": "jinaAPIKey",
       "type": "password",
-      "label": "Firecrawl API Key",
+      "label": "Jina AI API Key",
       "required": true,
-      "description": "Firecrawl API is used for the Read Web Page tool. Get your API key at https://www.firecrawl.dev/app/api-keys"
+      "description": "Jina AI Reader API is used for intelligent web content extraction. Get your free API key at https://jina.ai/?sui=apikey"
     },
     {
       "name": "researchMode",
@@ -81,14 +81,9 @@
     },
     {
       "id": "7a819d92-c53e-4e13-be8a-112eefa39c17",
-      "code": "",
       "name": "Search Web",
-      "httpAction": {
-        "id": "1ee8a09f-cdb9-4d51-921a-b917deb6b64b",
-        "url": "https://cloud.typingmind.com/api/plugins/serp/search?api_key={serpAPIKey}&engine=google&q={query}&json_restrictor=organic_results[].{title,snippet,source,link}",
-        "name": "",
-        "method": "GET"
-      },
+      "implementationType": "javascript",
+      "code": "async function badger_search_web(params, userSettings) {\n  try {\n    const response = await fetch('https://api.exa.ai/search', {\n      method: 'POST',\n      headers: {\n        'Authorization': 'Bearer ' + userSettings.exaAPIKey,\n        'Content-Type': 'application/json'\n      },\n      body: JSON.stringify({\n        query: params.query,\n        numResults: 10,\n        type: 'auto'\n      })\n    });\n\n    if (!response.ok) {\n      throw new Error('Exa API error: ' + response.status);\n    }\n\n    const data = await response.json();\n\n    return {\n      organic_results: data.results.map(r => ({\n        title: r.title || '',\n        snippet: r.highlights?.[0] || r.text?.substring(0, 250) || '',\n        source: r.url ? new URL(r.url).hostname : '',\n        link: r.url || '',\n        published_date: r.publishedDate || null,\n        author: r.author || null\n      })),\n      request_id: data.requestId\n    };\n  } catch (error) {\n    return {\n      error: 'Search failed: ' + error.message,\n      details: 'Check your Exa API key and internet connection'\n    };\n  }\n}",
       "openaiSpec": {
         "name": "badger_search_web",
         "parameters": {
@@ -97,7 +92,7 @@
           "properties": {
             "query": {
               "type": "string",
-              "description": "The search term to look up on the web. Be specific and include relevant keywords for better results. For technical queries, include version numbers or dates if relevant."
+              "description": "The search term to look up on the web. Be specific and include relevant keywords for better results. Exa's AI-powered search understands natural language queries."
             },
             "explanation": {
               "type": "string",
@@ -105,25 +100,15 @@
             }
           }
         },
-        "description": "Search the web using SERP API (Google search engine) for real-time information about any topic. Use this tool when you need up-to-date information that might not be available in your training data, or when you need to verify current facts. The search results will include relevant snippets and URLs from web pages. This is particularly useful for questions about current events, technology updates, or any topic that requires recent information."
+        "description": "Search the web using Exa's AI-powered search engine for real-time information about any topic. Exa uses semantic/neural search technology that understands natural language queries better than traditional keyword search. Use this tool when you need up-to-date information, current events, technology updates, or any topic that requires recent information. Results include relevant snippets, URLs, published dates, and authors."
       },
-      "outputType": "respond_to_ai",
-      "implementationType": "http"
+      "outputType": "respond_to_ai"
     },
     {
-      "id": "40e566af-f012-4dca-90c3-9965f391bfc2",
-      "code": "async function extract_web_page(params, userSettings) {\n  if (userSettings.researchMode === 'Deep Burrow') {\n    return await fetch('https://api.firecrawl.dev/v2/scrape', {\n      method: 'POST',\n      headers: {\n        'Content-Type': 'application/json',\n        Authorization: 'Bearer ' + userSettings.firecrawlApiKey,\n      },\n      body: JSON.stringify({\n        url: params.pageUrl,\n        formats: ['markdown'],\n        onlyMainContent: true,\n      }),\n    }).then((r) => r.json());\n  } else {\n    const json = await fetch('https://api.firecrawl.dev/v2/scrape', {\n      method: 'POST',\n      headers: {\n        'Content-Type': 'application/json',\n        Authorization: 'Bearer ' + userSettings.firecrawlApiKey,\n      },\n      body: JSON.stringify({\n        url: params.pageUrl,\n        formats: [\n          {\n            type: 'json',\n            prompt: params.extractInstructions,\n          },\n        ],\n      }),\n    }).then((r) => r.json());\n\n    if (userSettings.researchMode === 'Adaptive Dig') {\n      return {\n        result: json,\n        furtherInstructions:\n          'This result is extracted from the original web page. Use the \"read_full_web_page_content\" tool if you need to read the full content of the web page.',\n      };\n    } else {\n      return json;\n    }\n  }\n}\n",
+      "id": "f4e8c2a1-6d93-4b7e-9a12-3c5f8e7d2b4a",
       "name": "Extract Web Page",
-      "httpAction": {
-        "id": "fe67c640-6a5b-4ff8-bf44-394bccd0d109",
-        "url": "https://api.firecrawl.dev/v1/scrape",
-        "name": "",
-        "method": "POST",
-        "hasBody": true,
-        "hasHeaders": true,
-        "requestBody": "{\n    \"url\": \"{pageUrl}\",\n    \"formats\": [\n        \"markdown\"\n    ],\n    \"onlyMainContent\": true\n}",
-        "requestHeaders": "{\n    \"Content-Type\": \"application/json\",\n    \"Authorization\": \"Bearer {firecrawlApiKey}\"\n}"
-      },
+      "implementationType": "javascript",
+      "code": "async function extract_web_page(params, userSettings) {\n  try {\n    const headers = {\n      'Authorization': 'Bearer ' + userSettings.jinaAPIKey,\n      'X-Return-Format': 'markdown',\n      'X-Remove-Selector': 'nav,header,footer,aside,.ads'\n    };\n\n    if (userSettings.researchMode === 'Scout Dig' || userSettings.researchMode === 'Adaptive Dig') {\n      headers['X-Token-Budget'] = '4000';\n    } else if (userSettings.researchMode === 'Deep Burrow') {\n      headers['X-Engine'] = 'browser';\n      headers['X-With-Links-Summary'] = 'true';\n    }\n\n    const response = await fetch('https://r.jina.ai/' + params.pageUrl, {\n      method: 'POST',\n      headers: headers\n    });\n\n    if (!response.ok) {\n      throw new Error('Jina API error: ' + response.status);\n    }\n\n    const data = await response.json();\n\n    const result = {\n      title: data.data.title || '',\n      url: params.pageUrl,\n      content: data.data.content || '',\n      usage_tokens: data.data.usage?.tokens || 0\n    };\n\n    if (userSettings.researchMode === 'Adaptive Dig') {\n      result.furtherInstructions = 'This result is extracted with token limits. Use \"read_full_web_page_content\" if you need complete content.';\n    }\n\n    if (params.extractInstructions) {\n      result.extractInstructions = params.extractInstructions;\n      result.note = 'AI should extract relevant data from markdown content based on extractInstructions';\n    }\n\n    return result;\n  } catch (error) {\n    return {\n      error: 'Extraction failed: ' + error.message,\n      details: 'Check your Jina API key and URL validity'\n    };\n  }\n}",
       "openaiSpec": {
         "name": "extract_web_page",
         "parameters": {
@@ -132,23 +117,27 @@
           "properties": {
             "pageUrl": {
               "type": "string",
-              "description": "The URL of the web page to scrape for content."
+              "description": "The URL of the page to extract content from"
             },
             "extractInstructions": {
               "type": "string",
-              "description": "Describe the data you want to extract from the web page."
+              "description": "Optional instructions for what specific information to extract from the page"
+            },
+            "explanation": {
+              "type": "string",
+              "description": "One sentence explanation as to why this tool is being used, and how it contributes to the goal"
             }
           }
         },
-        "description": "Retrieves the text content of a web page in markdown format. When in Scout Dig mode, this tool returns an extracted content with only the answer based on the extractInstructions. When in Deep Burrow mode, this tool returns the full content of the web page."
+        "description": "Extract content from a web page using Jina AI Reader. Token budget varies by digging mode: Scout Dig and Adaptive Dig use 4000 token limits for efficiency, Deep Burrow mode uses browser engine for complete extraction."
       },
-      "outputType": "respond_to_ai",
-      "implementationType": "javascript"
+      "outputType": "respond_to_ai"
     },
     {
-      "id": "16f3fbef-df16-4833-8d43-be7e71e8a912",
-      "code": "async function read_full_web_page_content(params, userSettings) {\n  if (userSettings.researchMode !== 'Scout Dig') {\n    return await fetch('https://api.firecrawl.dev/v2/scrape', {\n      method: 'POST',\n      headers: {\n        'Content-Type': 'application/json',\n        Authorization: 'Bearer ' + userSettings.firecrawlApiKey,\n      },\n      body: JSON.stringify({\n        url: params.pageUrl,\n        formats: ['markdown'],\n        onlyMainContent: true,\n      }),\n    }).then((r) => r.json());\n  } else {\n    return \"\\\"read_full_web_page_content\\\" is not allowed in \" + userSettings.researchMode;\n  }\n}",
+      "id": "b7d3e9f2-4c8a-4d6e-9b1f-7e5a3c2d8b4f",
       "name": "Read Full Web Page",
+      "implementationType": "javascript",
+      "code": "async function read_full_web_page_content(params, userSettings) {\n  if (userSettings.researchMode === 'Scout Dig') {\n    return {\n      error: '\"read_full_web_page_content\" is not allowed in Scout Dig mode',\n      details: 'Switch to Deep Burrow or Adaptive Dig mode to read full content'\n    };\n  }\n\n  try {\n    const response = await fetch('https://r.jina.ai/' + params.pageUrl, {\n      method: 'POST',\n      headers: {\n        'Authorization': 'Bearer ' + userSettings.jinaAPIKey,\n        'X-Return-Format': 'markdown',\n        'X-Engine': 'browser',\n        'X-With-Links-Summary': 'true',\n        'X-With-Images-Summary': 'true',\n        'X-Remove-Selector': 'nav,header,footer,aside,.ads'\n      }\n    });\n\n    if (!response.ok) {\n      throw new Error('Jina API error: ' + response.status);\n    }\n\n    const data = await response.json();\n\n    return {\n      title: data.data.title || '',\n      url: params.pageUrl,\n      content: data.data.content || '',\n      links: data.data.links || {},\n      images: data.data.images || {},\n      usage_tokens: data.data.usage?.tokens || 0\n    };\n  } catch (error) {\n    return {\n      error: 'Full read failed: ' + error.message,\n      details: 'Check your Jina API key and URL validity'\n    };\n  }\n}",
       "openaiSpec": {
         "name": "read_full_web_page_content",
         "parameters": {
@@ -157,14 +146,17 @@
           "properties": {
             "pageUrl": {
               "type": "string",
-              "description": "The URL of the web page to scrape for content."
+              "description": "The URL of the page to read in full"
+            },
+            "explanation": {
+              "type": "string",
+              "description": "One sentence explanation as to why this tool is being used, and how it contributes to the goal"
             }
           }
         },
-        "description": "Retrieves the full text content of a web page in markdown format, this will return the full content of the website that may be extremely long."
+        "description": "Read complete content from a web page using Jina AI Reader's browser engine. Only available in Deep Burrow and Adaptive Dig modes. Returns full content with links and images summaries."
       },
-      "outputType": "respond_to_ai",
-      "implementationType": "javascript"
+      "outputType": "respond_to_ai"
     }
   ],
   "authenticationType": "AUTH_TYPE_NONE",
@@ -175,7 +167,7 @@
       "name": "Research Badger Mode",
       "method": "GET",
       "source": "static",
-      "staticContent": "<USER_INPUT>\n**Research Badger**: Enabled.\n**Digging Intensity**: {researchMode}\n</USER_INPUT>\n\nYou are Research Badger, an AI research assistant that relentlessly digs through sources to conduct thorough, comprehensive research on any given topic. Your goal is to gather comprehensive information, analyze it, and present a well-structured report.\n\nDigging Intensity Instructions:\n- **Scout Dig**: In Scout Dig mode, Research Badger will attempt to extract data from online sources using the extract_web_page tool, which saves tokens at a cost of reduced data accuracy. This is the default mode.\n- **Deep Burrow**: Research Badger will read the full content of the online sources to determine the final answer. If the web pages have a lot of content, it can risk consuming a lot of tokens, which is expensive and may exceed the model's context length limit.\n- **Adaptive Dig**: Research Badger will run in Scout Dig mode by default, but may opt in to read full web page content when needed (using the \"read_full_web_page_content\" tool) to get the most accurate answer.\n\nFollow these instructions carefully:\n\n1. Begin by reading the research task:\n<research_task>\n{lastUserMessage}\n</research_task>\n\n2. Create an initial research plan using the planning tool to create a todo list. This plan should outline the main areas of investigation and the steps you'll take to complete the task. Update the status of each todo list item as you progress through your research.\n\n3. Conduct at least one web search to gather information. In Research Badger mode, all information presented must come from the sources of your research. Before using any tools, provide your reasoning for choosing that particular tool.\n\n4. Follow these guidelines while gathering information:\n   - Collect all necessary data to carry out the research task concisely and thoroughly.\n   - Use bullet points or numbered lists for clarity when appropriate.\n   - Don't ask for unnecessary information or information already provided.\n   - Continue researching until all items in your todo list are completed.\n   - Use available tools one at a time to find the requested information.\n   - Gather data from multiple sources to ensure accuracy and comprehensiveness.\n\n5. Cite all sources used with links to the original websites.\n\n6. Once you have gathered all the information, compile a comprehensive report. Use markdown formatting (such as tables and bullet points) and tools (like graphs) to present your findings effectively. Highlight any surprising or interesting details you discovered during your research.\n\n7. Output your final report with the following structure\n   \n   [Title of report]\n   [Include your comprehensive report here, using appropriate formatting]\n   \n   Interesting Findings:\n   [Highlight surprising or noteworthy details]\n   \n   Sources:\n   [List all sources with links]",
+      "staticContent": "<USER_INPUT>\n**Research Badger**: Enabled.\n**Digging Intensity**: {researchMode}\n</USER_INPUT>\n\nYou are Research Badger, an AI research assistant that relentlessly digs through sources to conduct thorough, comprehensive research on any given topic. Your goal is to gather comprehensive information, analyze it, and present a well-structured report.\n\nDigging Intensity Instructions:\n- **Scout Dig**: In Scout Dig mode, Research Badger will attempt to extract data from online sources using the extract_web_page tool, with token limits (~4000 tokens per page) to extract data efficiently. This is the default mode.\n- **Deep Burrow**: Research Badger will read the full content of the online sources using Jina AI Reader's browser engine to determine the final answer. If the web pages have a lot of content, it can risk consuming a lot of tokens, which is expensive and may exceed the model's context length limit.\n- **Adaptive Dig**: Research Badger will run in Scout Dig mode by default, but may opt in to read full web page content when needed (using the \"read_full_web_page_content\" tool) to get the most accurate answer.\n\nFollow these instructions carefully:\n\n1. Begin by reading the research task:\n<research_task>\n{lastUserMessage}\n</research_task>\n\n2. Create an initial research plan using the planning tool to create a todo list. This plan should outline the main areas of investigation and the steps you'll take to complete the task. Update the status of each todo list item as you progress through your research.\n\n3. Conduct at least one web search to gather information. In Research Badger mode, all information presented must come from the sources of your research. Before using any tools, provide your reasoning for choosing that particular tool.\n\n4. Follow these guidelines while gathering information:\n   - Collect all necessary data to carry out the research task concisely and thoroughly.\n   - Use bullet points or numbered lists for clarity when appropriate.\n   - Don't ask for unnecessary information or information already provided.\n   - Continue researching until all items in your todo list are completed.\n   - Use available tools one at a time to find the requested information.\n   - Gather data from multiple sources to ensure accuracy and comprehensiveness.\n\n5. Cite all sources used with links to the original websites.\n\n6. Once you have gathered all the information, compile a comprehensive report. Use markdown formatting (such as tables and bullet points) and tools (like graphs) to present your findings effectively. Highlight any surprising or interesting details you discovered during your research.\n\n7. Output your final report with the following structure\n   \n   [Title of report]\n   [Include your comprehensive report here, using appropriate formatting]\n   \n   Interesting Findings:\n   [Highlight surprising or noteworthy details]\n   \n   Sources:\n   [List all sources with links]",
       "cacheDurationHours": 1,
       "cacheRefreshPolicy": "REFRESH_NEVER"
     }
