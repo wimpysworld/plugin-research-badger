@@ -1,4 +1,8 @@
-## Research Badger
+<p align="center">
+  <img src="icon.png" width="256" height="256" alt="Research Badger">
+</p>
+
+# Research Badger
 
 Relentlessly dig through online sources to uncover comprehensive insights on any topic. Research Badger compiles thorough reports by drafting research plans, searching the web, and reading web pages with tenacious attention to detail.
 
