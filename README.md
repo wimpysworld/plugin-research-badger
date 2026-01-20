@@ -37,9 +37,9 @@ After installation, you'll need to configure the plugin with your API key:
 
 ## Digging Intensity
 
-- **Scout Dig**: Research Badger will attempt to extract data from online sources using the extract tool from Jina AI Reader, which saves tokens at a cost of reduced data accuracy. This is the default mode.
-- **Deep Burrow**: Research Badger will read the full content of the online sources to determine the final answer. If the web pages have a lot of content, it can risk consuming a lot of tokens, which is expensive and may exceed the model's context length limit.
-- **Adaptive Dig**: Research Badger will run in Scout Dig mode by default, but may opt in to read full web page content when absolutely needed to get the most accurate answer.
+- **Snuffle**: Research Badger will attempt to extract data from online sources using the extract tool from Jina AI Reader, which saves tokens at a cost of reduced data accuracy. This is the default mode.
+- **Burrow**: Research Badger will read the full content of the online sources to determine the final answer. If the web pages have a lot of content, it can risk consuming a lot of tokens, which is expensive and may exceed the model's context length limit.
+- **Instinct**: Research Badger will run in Snuffle mode by default, but may opt in to read full web page content when absolutely needed to get the most accurate answer.
 
 ### Customisable
 The Research Badger plugin is customisable. You can duplicate this plugin and add your own tools to enhance the quality of the final report. The system instructions and prompts are also available in the plugin source.

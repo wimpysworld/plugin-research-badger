@@ -43,10 +43,10 @@ plugin-research-badger/
 
 3. **Extract Web Page** (`extract_web_page`) - JavaScript
    - Lightweight extraction using Jina AI Reader
-   - Mode-aware (Scout Dig/Deep Burrow/Adaptive Dig)
+   - Mode-aware (Snuffle/Burrow/Instinct)
 
 4. **Read Full Web Page** (`read_full_web_page_content`) - JavaScript
-   - Full content retrieval in Deep Burrow/Adaptive Dig modes
+   - Full content retrieval in Burrow/Instinct modes
    - Returns complete page markdown
 
 ## Configuration
@@ -57,9 +57,9 @@ plugin-research-badger/
 
 ### Digging Intensity
 
-- **Scout Dig** (default): Token-efficient extraction with reduced accuracy
-- **Deep Burrow**: Full content retrieval, high token consumption
-- **Adaptive Dig**: Starts with Scout Dig, upgrades to full reads when needed
+- **Snuffle** (default): Token-efficient extraction with reduced accuracy
+- **Burrow**: Full content retrieval, high token consumption
+- **Instinct**: Starts with Snuffle, upgrades to full reads when needed
 
 ## Development
 
@@ -138,8 +138,8 @@ plugin-research-badger/
 - [ ] API keys validate correctly
 - [ ] Research plan creates and updates todos
 - [ ] Web search returns relevant results
-- [ ] Extract web page works in Scout Dig mode
-- [ ] Full page read works in Deep Burrow/Adaptive Dig modes
+- [ ] Extract web page works in Snuffle mode
+- [ ] Full page read works in Burrow/Instinct modes
 - [ ] Mode switching behaves correctly
 - [ ] Token usage is reasonable
 
@@ -185,7 +185,7 @@ refactor: consolidate API error handling
 ## Known Limitations
 
 - Research Plan tool has no persistent state (AI must track todos)
-- Token consumption can be high in Deep Burrow mode
+- Token consumption can be high in Burrow mode
 - Maximum research session: ~2 minutes
 - Requires valid Jina AI API key
-- Adaptive Dig mode relies on AI discretion for full reads
+- Instinct mode relies on AI discretion for full reads
