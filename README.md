@@ -2,7 +2,7 @@
 
 Relentlessly dig through online sources to uncover comprehensive insights on any topic. Research Badger compiles thorough reports by drafting research plans, searching the web, and reading web pages with tenacious attention to detail.
 
-This plugin uses **Serp API** and **Firecrawl API**. You need to provide API keys from both services to start using it.
+This plugin uses **Exa API** and **Jina AI Reader API**. You need to provide API keys from both services to start using it.
 
 ## Installation
 
@@ -30,16 +30,16 @@ After installation, you'll need to configure the plugin with your API keys:
 1. Open **TypingMind** → **Plugins**
 2. Find **Research Badger** and click **Settings**
 3. Enter your API keys:
-   - **Serp API Key**: Sign up at [serpapi.com](https://serpapi.com) to get your API key
-   - **Firecrawl API Key**: Get your key at [firecrawl.dev/app/api-keys](https://www.firecrawl.dev/app/api-keys)
+   - **Exa API Key**: Sign up at [dashboard.exa.ai](https://dashboard.exa.ai) for semantic web search (includes $10 free credit)
+   - **Jina AI API Key**: Get your key at [jina.ai/?sui=apikey](https://jina.ai/?sui=apikey) for intelligent content extraction (free tier available)
 4. Select your preferred **Digging Intensity** (see below)
 5. Save your settings
 
-**Note**: Both API keys are required for the plugin to function. Free tiers are available for both services to get started.
+**Note**: Both services offer generous free tiers to get started. Exa provides $10 credit (~2,000 searches), and Jina offers a free tier suitable for testing and light use.
 
 ## Digging Intensity
 
-- **Scout Dig**: Research Badger will attempt to extract data from online sources using the extract tool from Firecrawl, which saves tokens at a cost of reduced data accuracy. This is the default mode.
+- **Scout Dig**: Research Badger will attempt to extract data from online sources using the extract tool from Jina AI Reader, which saves tokens at a cost of reduced data accuracy. This is the default mode.
 - **Deep Burrow**: Research Badger will read the full content of the online sources to determine the final answer. If the web pages have a lot of content, it can risk consuming a lot of tokens, which is expensive and may exceed the model's context length limit.
 - **Adaptive Dig**: Research Badger will run in Scout Dig mode by default, but may opt in to read full web page content when absolutely needed to get the most accurate answer.
 
