@@ -8,7 +8,7 @@ Research Badger is a TypingMind plugin that performs deep, relentless research b
 
 - **Plugin Format**: TypingMind JSON plugin specification
 - **Implementation**: JavaScript (ES6+) and HTTP requests
-- **APIs**: Exa API (web search), Jina AI Reader API (content extraction)
+- **APIs**: Jina AI (web search and content extraction)
 - **Runtime**: TypingMind plugin environment (browser-based)
 
 ## Project Structure
@@ -38,8 +38,8 @@ plugin-research-badger/
    - Tracks progress with todo items (pending/in_progress/completed/cancelled)
 
 2. **Search Web** (`badger_search_web`) - JavaScript
-   - Semantic web search via Exa API
-   - Returns snippets, titles, and URLs
+   - Web search via Jina AI Search API
+   - Returns titles, URLs, descriptions, and snippets
 
 3. **Extract Web Page** (`extract_web_page`) - JavaScript
    - Lightweight extraction using Jina AI Reader
@@ -53,8 +53,7 @@ plugin-research-badger/
 
 ### Required API Keys
 
-- **Exa API**: Sign up at [dashboard.exa.ai](https://dashboard.exa.ai)
-- **Jina AI Reader API**: Get key at [jina.ai/?sui=apikey](https://jina.ai/?sui=apikey)
+- **Jina AI API**: Get key at [jina.ai/?sui=apikey](https://jina.ai/?sui=apikey) (powers both search and content extraction)
 
 ### Digging Intensity
 
@@ -180,8 +179,7 @@ refactor: consolidate API error handling
 ## Resources
 
 - [TypingMind Plugin Documentation](https://docs.typingmind.com/plugins/build-a-typingmind-plugin)
-- [Exa API Documentation](https://docs.exa.ai)
-- [Jina AI Reader Documentation](https://docs.jina.ai/jina-ai-reader)
+- [Jina AI Documentation](https://docs.jina.ai)
 - [OpenAI Function Calling](https://platform.openai.com/docs/guides/function-calling)
 
 ## Known Limitations
@@ -189,5 +187,5 @@ refactor: consolidate API error handling
 - Research Plan tool has no persistent state (AI must track todos)
 - Token consumption can be high in Deep Burrow mode
 - Maximum research session: ~2 minutes
-- Requires valid API keys for both Exa and Jina AI Reader
+- Requires valid Jina AI API key
 - Adaptive Dig mode relies on AI discretion for full reads
