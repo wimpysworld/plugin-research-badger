@@ -2,7 +2,7 @@
 
 Relentlessly dig through online sources to uncover comprehensive insights on any topic. Research Badger compiles thorough reports by drafting research plans, searching the web, and reading web pages with tenacious attention to detail.
 
-This plugin uses **Exa API** and **Jina AI Reader API**. You need to provide API keys from both services to start using it.
+This plugin uses **Jina AI** for both web search and content extraction. You only need a single Jina AI API key to start using it.
 
 ## Installation
 
@@ -25,17 +25,15 @@ This plugin uses **Exa API** and **Jina AI Reader API**. You need to provide API
 
 ### Configuration
 
-After installation, you'll need to configure the plugin with your API keys:
+After installation, you'll need to configure the plugin with your API key:
 
 1. Open **TypingMind** → **Plugins**
 2. Find **Research Badger** and click **Settings**
-3. Enter your API keys:
-   - **Exa API Key**: Sign up at [dashboard.exa.ai](https://dashboard.exa.ai) for semantic web search (includes $10 free credit)
-   - **Jina AI API Key**: Get your key at [jina.ai/?sui=apikey](https://jina.ai/?sui=apikey) for intelligent content extraction (free tier available)
+3. Enter your **Jina AI API Key**: Get your free key at [jina.ai/?sui=apikey](https://jina.ai/?sui=apikey)
 4. Select your preferred **Digging Intensity** (see below)
 5. Save your settings
 
-**Note**: Both services offer generous free tiers to get started. Exa provides $10 credit (~2,000 searches), and Jina offers a free tier suitable for testing and light use.
+**Note**: Jina AI offers a generous free tier suitable for testing and moderate use.
 
 ## Digging Intensity
 
