@@ -82,8 +82,18 @@
     {
       "id": "7a819d92-c53e-4e13-be8a-112eefa39c17",
       "name": "Search Web",
-      "implementationType": "javascript",
-      "code": "async function badger_search_web(params, userSettings) {\n  try {\n    if (!userSettings.exaAPIKey) {\n      throw new Error('Exa API key not configured');\n    }\n    const response = await fetch('https://api.exa.ai/search', {\n      method: 'POST',\n      headers: {\n        'x-api-key': userSettings.exaAPIKey,\n        'Content-Type': 'application/json',\n        'Accept': 'application/json'\n      },\n      body: JSON.stringify({\n        query: params.query,\n        numResults: 10,\n        type: 'auto',\n        text: true\n      })\n    });\n\n    if (!response.ok) {\n      const errorText = await response.text();\n      throw new Error('Exa API error ' + response.status + ': ' + errorText);\n    }\n\n    const data = await response.json();\n\n    return {\n      organic_results: (data.results || []).map(r => ({\n        title: r.title || '',\n        snippet: r.highlights?.[0] || r.text?.substring(0, 250) || '',\n        source: r.url ? new URL(r.url).hostname : '',\n        link: r.url || '',\n        published_date: r.publishedDate || null,\n        author: r.author || null\n      })),\n      request_id: data.requestId\n    };\n  } catch (error) {\n    return {\n      error: 'Search failed: ' + error.message,\n      details: 'Check your Exa API key and internet connection'\n    };\n  }\n}",
+      "implementationType": "http",
+      "code": "",
+      "httpAction": {
+        "id": "exa-search-action",
+        "url": "https://api.exa.ai/search",
+        "name": "Exa Search",
+        "method": "POST",
+        "hasBody": true,
+        "hasHeaders": true,
+        "requestBody": "{\n  \"query\": \"{query}\",\n  \"numResults\": 10,\n  \"type\": \"auto\",\n  \"text\": true\n}",
+        "requestHeaders": "{\n  \"x-api-key\": \"{exaAPIKey}\",\n  \"Content-Type\": \"application/json\",\n  \"Accept\": \"application/json\"\n}"
+      },
       "openaiSpec": {
         "name": "badger_search_web",
         "parameters": {
