@@ -1,12 +1,8 @@
-<p align="center">
-  <img src="icon.png" width="256" height="256" alt="Research Badger">
-</p>
-
-# Research Badger
+# Research Badger 🦡
 
 Relentlessly dig through online sources to uncover comprehensive insights on any topic. Research Badger compiles thorough reports by drafting research plans, searching the web, and reading web pages with tenacious attention to detail.
 
-This plugin uses **Jina AI** for both web search and content extraction. You only need a single Jina AI API key to start using it.
+This plugin was forked from [TypingMind Deep Research](https://github.com/TypingMind/plugin-deep-research) and uses [**Jina AI**](https://jina.ai/) for both web search and content extraction. You only need a single Jina AI API key to start using it.
 
 ## Installation
 
@@ -46,6 +42,7 @@ After installation, you'll need to configure the plugin with your API key:
 - **Instinct**: Research Badger will run in Snuffle mode by default, but may opt in to read full web page content when absolutely needed to get the most accurate answer.
 
 ### Customisable
+
 The Research Badger plugin is customisable. You can duplicate this plugin and add your own tools to enhance the quality of the final report. The system instructions and prompts are also available in the plugin source.
 
 By default, the Research Badger plugin comes with 3 tools: Research Plan, Search Web, and Read Web Page. Depending on your specific needs, you can add more tools like reading from a tweet, searching from a private database, or controlling a browser. The TypingMind plugin system allows you to add multiple tools to the Research Badger plugin and supports various ways to implement your tools using JavaScript, HTTP requests, or MCP.
@@ -53,6 +50,7 @@ By default, the Research Badger plugin comes with 3 tools: Research Plan, Search
 [Learn how to develop TypingMind plugins here](https://www.typingmind.com/plugins-docs).
 
 ## Token Usage
+
 This plugin may use multiple tools in multiple turns. A deep research task can run for up to 2 minutes. Please monitor the token usage closely to avoid consuming too many tokens. You can also modify the plugin to make it more token-efficient by adding your own tools to perform web searches and read web pages.
 
 ### Example Usage
